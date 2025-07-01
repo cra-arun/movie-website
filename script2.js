@@ -89,7 +89,8 @@ async function openPayment(title, amount, productId, user) {
             description: `Purchase: ${title}`,
             handler: async function (response) {
                 try {
-                    const backendResponse = await fetch('/api/process-payment', {
+                    const backendResponse = await fetch('https://movie-website-umber-kappa.vercel.app/api/process-payment', {
+
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
