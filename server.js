@@ -4,6 +4,7 @@ const Razorpay = require('razorpay');
 const { google } = require('googleapis');
 const path = require('path');
 const fs = require('fs');
+require('dotenv').config();
 
 // Import your driveService and shareFile modules
 const drive = require('./driveService');
@@ -26,8 +27,8 @@ app.use('/auth', express.static(path.join(__dirname, 'auth')));
 
 // --- Razorpay Configuration ---
 const razorpay = new Razorpay({
-    key_id: "rzp_test_jQssrrKMG8JAdG",
-    key_secret: "zbzGONn10vyTAHfda4t9TftC",
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 // --- Product Mapping (data-title must match HTML) ---
