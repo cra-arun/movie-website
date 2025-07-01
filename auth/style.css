@@ -1,0 +1,46 @@
+body {
+  font-family: Arial;
+  background: #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+.container {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 320px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+}
+button {
+  background: #007bff;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+button:hover {
+  background: #0056b3;
+}
+.message, .error {
+  text-align: center;
+  margin-top: 10px;
+}
+.message { color: green; }
+.error { color: red; }
+.tick {
+  font-size: 60px;
+  color: green;
+  text-align: center;
+}
+a {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  color: #007bff;
+}
