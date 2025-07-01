@@ -1,12 +1,13 @@
 {
-  "name": "study-store-backend",
+  "name": "movie-website",
   "version": "1.0.0",
-  "description": "Study Store - Razorpay + Google Drive Access",
-  "main": "api/process-payment.js",
-  "type": "commonjs",
-  "scripts": {},
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
-    "googleapis": "^150.0.1",
-    "razorpay": "^2.9.6"
+    "express": "^4.18.2",
+    "razorpay": "^2.8.6",
+    "googleapis": "^105.0.0"
   }
 }
