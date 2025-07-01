@@ -1,22 +1,31 @@
-// api/process-payment.js
+// Example for api/process-payment.js (apply similarly to other API files)
+
 const Razorpay = require('razorpay');
-const drive = require('./driveService'); // Updated path
-const { shareDriveFileWithUser } = require('./shareFile'); // Updated path
+const drive = require('./driveService');
+const { shareDriveFileWithUser } = require('./shareFile');
 
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET, // Make sure this is an env variable
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 const productFileMap = {
-    "Mastering Power BI": { fileId: "1fxhMTzxba05tJcT3Byn9vlg213Omk1Ue", price: 79900 }, // Prices in paisa
-    "Advanced Excel for Data Analysis": { fileId: "1JxsIDqO8e7zAPhz8fw17tgEh2D9Wyspk", price: 49900 },
-    "Python Programming Fundamentals": { fileId: "1hacprG9-WX9DBRt1PDweNrXHXj08Wd8g", price: 69900 },
-    "SQL for Data Science": { fileId: "YOUR_SQL_DRIVE_FILE_ID", price: 55000 },
-    "Introduction to Web Development": { fileId: "YOUR_WEBDEV_DRIVE_FILE_ID", price: 75000 }
+    // ... (your productFileMap)
 };
 
 module.exports = async (req, res) => {
+    // --- CORS Headers ---
+    res.setHeader('Access-Control-Allow-Origin', 'https://moviewatchlist-arun.web.app'); // IMPORTANT: Replace with your actual Firebase domain(s)
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Credentials', 'true'); // If you use cookies/auth headers
+
+    // Handle preflight OPTIONS request
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+    // --- END CORS Headers ---
+
     if (req.method !== 'POST') {
         return res.status(405).json({ success: false, message: 'Method Not Allowed' });
     }
@@ -70,11 +79,10 @@ module.exports = async (req, res) => {
 
     } catch (error) {
         console.error("❌ Error processing payment in backend:", error.message || error);
-        // Include more detailed error for debugging, but only expose generic message to client
         return res.status(500).json({
             success: false,
             message: 'Server error during payment processing. Please contact support.',
-            debug: error.message // You might remove this for production
+            debug: error.message
         });
     }
 };
