@@ -10,7 +10,26 @@ const razorpay = new Razorpay({
 });
 
 const productFileMap = {
-    // ... (your productFileMap)
+     "Mastering Power BI": {
+        fileId: "1fxhMTzxba05tJcT3Byn9vlg213Omk1Ue",
+        price: 49900
+    },
+    "Advanced Excel for Data Analysis": {
+        fileId: "1JxsIDqO8e7zAPhz8fw17tgEh2D9Wyspk",
+        price: 34900
+    },
+    "Python Programming Fundamentals": {
+        fileId: "1hacprG9-WX9DBRt1PDweNrXHXj08Wd8g",
+        price: 69900
+    },
+    "SQL for Data Science": {
+        fileId: "YOUR_SQL_DRIVE_FILE_ID", // Make sure to replace these placeholders
+        price: 55000
+    },
+    "Introduction to Web Development": {
+        fileId: "YOUR_WEBDEV_DRIVE_FILE_ID", // Make sure to replace these placeholders
+        price: 75000
+    }
 };
 
 module.exports = async (req, res) => {
