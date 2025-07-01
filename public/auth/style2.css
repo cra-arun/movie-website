@@ -1,0 +1,64 @@
+
+/* Basic styling for toasts - add this to your style.css or here */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+.app-toast {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+.app-toast.error {
+    background-color: #dc3545; /* Red for errors */
+}
+.app-toast.success {
+    background-color: #28a745; /* Green for success */
+}
+.app-toast.warning {
+    background-color: #ffc107; /* Orange for warnings */
+    color: #333;
+}
+.app-toast.hide {
+    opacity: 0;
+}
+
+/* Basic card styling for demonstration */
+.study-material-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 300px;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+}
+.study-material-card h3 {
+    margin-top: 0;
+    color: #007bff;
+}
+.study-material-card p {
+    font-size: 1.1em;
+    color: #555;
+}
+.study-material-card .buy-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 15px;
+}
+.study-material-card .buy-button:hover {
+    background-color: #0056b3;
+}

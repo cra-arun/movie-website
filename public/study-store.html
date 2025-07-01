@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Store</title>
+    <link rel="stylesheet" href="auth/style2.css"> 
+    
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <style>
+        /* Basic styling for toasts - copy this to your style.css */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .app-toast {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .app-toast.error {
+            background-color: #dc3545; /* Red for errors */
+        }
+        .app-toast.success {
+            background-color: #28a745; /* Green for success */
+        }
+        .app-toast.warning {
+            background-color: #ffc107; /* Orange for warnings */
+            color: #333;
+        }
+        .app-toast.hide {
+            opacity: 0;
+        }
+
+        /* General Body and Layout Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            display: flex; /* Use flexbox for main layout */
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            flex-direction: column; /* For header, main content, footer arrangement */
+        }
+
+        /* Header Styling */
+        header {
+            background-color: #2c3e50; /* Dark blue/grey */
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 100; /* Ensure header is above other content */
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            letter-spacing: 1px;
+        }
+        .auth-controls {
+            display: flex;
+            align-items: center;
+        }
+        .auth-controls button {
+            background-color: #3498db; /* Blue */
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .auth-controls button:hover {
+            background-color: #2980b9;
+        }
+        .user-icon {
+            font-size: 1.8em; /* Larger icon */
+            cursor: pointer;
+            color: #ecf0f1; /* Light grey */
+            margin-left: 15px;
+        }
+        .user-icon:hover {
+            color: #bdc3c7;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            display: flex;
+            flex: 1; /* Allows main content to grow and take available space */
+            padding-top: 20px; /* Space from header */
+        }
+
+        /* Left Sidebar Styling */
+        .sidebar {
+            width: 300px; /* Fixed width */
+            min-width: 300px; /* Ensure it doesn't shrink */
+            background-color: #ecf0f1; /* Light grey */
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto; /* Enable scrolling if content overflows */
+            height: calc(100vh - 80px); /* Adjust based on header height for full page height */
+            position: sticky; /* Sticky to stay on screen */
+            top: 0; /* Align to top */
+            align-self: flex-start; /* Stick to the top of its container */
+            margin-top: -20px; /* Adjust to align with main content padding */
+            padding-top: 40px; /* Add extra padding to compensate for negative margin */
+        }
+        .sidebar h2 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #bdc3c7;
+            padding-bottom: 10px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #34495e;
+            font-weight: bold;
+            display: block;
+            padding: 8px 0;
+            transition: color 0.3s ease;
+        }
+        .sidebar ul li a:hover {
+            color: #3498db;
+        }
+
+        /* Study Materials Container */
+        #study-materials-container {
+            flex-grow: 1; /* Allows cards container to take remaining space */
+            display: flex;
+            flex-wrap: wrap; /* Allow cards to wrap to next line */
+            justify-content: center; /* Center cards horizontally */
+            gap: 25px; /* Space between cards */
+            padding: 20px;
+            align-content: flex-start; /* Align content to the top */
+        }
+
+        /* Study Material Card Styling */
+        .study-material-card {
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            width: 300px; /* Fixed width for cards */
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Push button to bottom */
+        }
+        .study-material-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        .study-material-card h3 {
+            margin-top: 0;
+            color: #007bff;
+            font-size: 1.5em;
+        }
+        .study-material-card p {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .study-material-card .buy-button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .study-material-card .buy-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Footer (Optional) */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: auto; /* Push footer to the bottom */
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Study Store</h1>
+        <div class="auth-controls">
+            <div id="auth-status">
+                <button id="login-signup-button">Login / Sign Up</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content">
+        <aside class="sidebar">
+            <h2>Categories</h2>
+            <ul>
+                <li><a href="#popular">Popular Courses</a></li>
+                <li><a href="#new">New Arrivals</a></li>
+                <li><a href="#software">Software Skills</a></li>
+                <li><a href="#data-science">Data Science</a></li>
+                <li><a href="#business">Business Acumen</a></li>
+                <li><a href="#all">View All Materials</a></li>
+            </ul>
+
+            <h2>Study Guides</h2>
+            <ul>
+                <li><a href="#guide-finance">Finance Basics</a></li>
+                <li><a href="#guide-marketing">Digital Marketing</a></li>
+            </ul>
+
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #bdc3c7;">
+                <h3>Need Help?</h3>
+                <p>Contact our support team for assistance.</p>
+                <a href="mailto:support@studystore.com" style="color: #007bff;">support@studystore.com</a>
+            </div>
+        </aside>
+
+        <section id="study-materials-container">
+            <div class="study-material-card" data-title="Mastering Power BI" data-price="499.00" data-product-id="skills/power_bi">
+             <h3>Mastering Power BI</h3>
+                <p>Learn to create powerful dashboards.</p>
+                <button class="buy-button">Buy Now</button>
+            </div>
+
+            <div class="study-material-card"
+                 data-title="Advanced Excel for Data Analysis"
+                 data-price="349.00"
+                 data-product-id="skills/excel"> <h3>Advanced Excel for Data Analysis</h3>
+                <p>Unlock the full potential of spreadsheets.</p>
+                <button class="buy-button">Buy Now</button>
+            </div>
+
+            <div class="study-material-card"
+                 data-title="Python Programming Fundamentals"
+                 data-price="699.00"
+                 data-product-id="skills/python"> <h3>Python Programming Fundamentals</h3>
+                <p>Start your coding journey with Python.</p>
+                <button class="buy-button">Buy Now</button>
+            </div>
+
+            <div class="study-material-card"
+                 data-title="SQL for Data Science"
+                 data-price="550.00"
+                 data-product-id="data_science/sql_for_ds">
+                <h3>SQL for Data Science</h3>
+                <p>Query and manage your data effectively.</p>
+                <button class="buy-button">Buy Now</button>
+            </div>
+             <div class="study-material-card"
+                 data-title="Introduction to Web Development"
+                 data-price="750.00"
+                 data-product-id="web_dev/intro_to_web">
+                <h3>Introduction to Web Development</h3>
+                <p>Build your first dynamic websites.</p>
+                <button class="buy-button">Buy Now</button>
+            </div>
+        </section>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script type="module" src="script2.js"></script>
+</body>
+</html>
