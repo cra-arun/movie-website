@@ -1,15 +1,39 @@
 {
-  "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "server.js",
-      "use": "@vercel/node"
+      "source": "/api/process-payment",
+      "destination": "/api/process-payment.js"
+    },
+    {
+      "source": "/api/check-access",
+      "destination": "/api/check-access.js"
+    },
+    {
+      "source": "/api/test",
+      "destination": "/api/test.js"
+    },
+    {
+      "source": "/auth/(.*)",
+      "destination": "/auth/$1"
+    },
+    {
+      "source": "/",
+      "destination": "/study-store.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
     }
   ],
-  "routes": [
+  "headers": [
     {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "s-maxage=1, stale-while-revalidate"
+        }
+      ]
     }
   ]
 }
