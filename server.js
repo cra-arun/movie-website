@@ -25,13 +25,18 @@ app.get('/', (req, res) => {
 app.use(express.static(__dirname));
 app.use('/auth', express.static(path.join(__dirname, 'auth')));
 
+// --- Health Check Endpoint ---
+app.get('/api/test', (req, res) => {
+    res.json({ success: true, message: "✅ API working!" });
+});
+
 // --- Razorpay Configuration ---
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
     key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// --- Product Mapping (data-title must match HTML) ---
+// --- Product Mapping ---
 const productFileMap = {
     "Mastering Power BI": {
         fileId: "1fxhMTzxba05tJcT3Byn9vlg213Omk1Ue",
@@ -60,50 +65,38 @@ app.post('/api/process-payment', async (req, res) => {
     const { paymentId, productTitle, userEmail } = req.body;
 
     if (!paymentId || !productTitle || !userEmail) {
-        console.error('Missing required payment details in backend: ', { paymentId, productTitle, userEmail });
         return res.status(400).json({ success: false, message: 'Missing required payment details.' });
     }
 
     const materialInfo = productFileMap[productTitle];
 
     if (!materialInfo) {
-        console.error(`Product not found in map for title: ${productTitle}`);
         return res.status(404).json({ success: false, message: 'Product information not found.' });
     }
 
     try {
-        // 1. Fetch payment
         let payment = await razorpay.payments.fetch(paymentId);
 
-        // 2. Auto-capture if only authorized (test mode)
         if (payment.status === 'authorized') {
             payment = await razorpay.payments.capture(paymentId, payment.amount, payment.currency);
             console.log(`✔ Payment ${paymentId} auto-captured.`);
         }
 
-        // 3. Validate payment
         if (payment.status !== 'captured') {
-            console.warn(`Payment ${paymentId} not captured. Current status: ${payment.status}`);
             return res.status(400).json({ success: false, message: 'Payment not captured.' });
         }
 
         if (payment.amount !== materialInfo.price) {
-            console.warn(`Amount mismatch for payment ${paymentId}: Expected ${materialInfo.price}, Got ${payment.amount}`);
             return res.status(400).json({ success: false, message: 'Payment amount mismatch.' });
         }
 
         if (payment.currency !== 'INR') {
-            console.warn(`Currency mismatch for payment ${paymentId}: Expected INR, Got ${payment.currency}`);
             return res.status(400).json({ success: false, message: 'Unsupported currency.' });
         }
 
-        console.log(`✔ Payment ${paymentId} verified successfully for ${userEmail}.`);
-
-        // 4. Grant Drive Access
         await shareDriveFileWithUser(materialInfo.fileId, userEmail);
-        console.log(`✔ Access granted to ${userEmail} for file ${materialInfo.fileId}`);
+        console.log(`✔ Access granted to ${userEmail}`);
 
-        // 5. Get Drive view link
         const fileMetadata = await drive.files.get({
             fileId: materialInfo.fileId,
             fields: 'webViewLink'
@@ -112,7 +105,6 @@ app.post('/api/process-payment', async (req, res) => {
         const downloadLink = fileMetadata.data.webViewLink;
 
         if (!downloadLink) {
-            console.error(`Could not retrieve webViewLink for fileId: ${materialInfo.fileId}`);
             return res.status(500).json({ success: false, message: 'Could not get file access link.' });
         }
 
@@ -123,20 +115,12 @@ app.post('/api/process-payment', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ Error processing payment or granting access:', error.message);
-        if (error.response?.data) {
-            console.error('Google API Error Response:', error.response.data);
-        } else if (error.razorpay) {
-            console.error('Razorpay Error:', error.razorpay);
-        } else {
-            console.error('Full error object:', error);
-        }
+        console.error('❌ Error processing payment:', error.message);
         return res.status(500).json({ success: false, message: 'An internal server error occurred during processing.' });
     }
 });
 
 // --- POST /api/check-access ---
-// Used to dynamically check which products a user can access
 app.post('/api/check-access', async (req, res) => {
     const { userEmail } = req.body;
 
@@ -172,5 +156,5 @@ app.post('/api/check-access', async (req, res) => {
 
 // --- Start Server ---
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
