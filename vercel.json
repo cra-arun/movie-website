@@ -17,7 +17,7 @@
       "destination": "/auth/$1"
     },
     {
-      "source": "/",
+      "source": "/study-store.html",
       "destination": "/study-store.html"
     },
     {
