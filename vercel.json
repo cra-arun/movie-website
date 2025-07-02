@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/", // <-- NEW: This rule catches requests to the root path
+      "destination": "/study-store.html" // <-- NEW: It serves study-store.html for the root
+    },
+    {
       "source": "/api/process-payment",
       "destination": "/api/process-payment.js"
     },
