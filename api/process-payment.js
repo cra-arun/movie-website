@@ -38,7 +38,9 @@ const productFileMap = {
 module.exports = async (req, res) => {
     // --- CORS Headers ---
     // This is critical for your frontend hosted on Firebase to communicate with this backend
-    res.setHeader('Access-Control-Allow-Origin', 'https://studystorex.web.app'); // IMPORTANT: Replace with your actual Firebase domain(s)
+    res.setHeader('Access-Control-Allow-Origin','https://studystorex.web.app', // Your deployed Firebase Hosting domain
+        'http://127.0.0.1',             // Your local development server (often includes port, e.g., :5500 or :3000)
+        'http://localhost'); // IMPORTANT: Replace with your actual Firebase domain(s)
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
